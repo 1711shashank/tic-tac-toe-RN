@@ -44,6 +44,13 @@ const Game = () => {
         );
     };
 
+    const resetGame = () => {
+        setSquares(Array(9).fill(null));
+        setIsXNext(true);
+        setWinner(null);
+        setStatus(`Let's Play`);
+    };
+
 
     const Board = () => {
         return (
@@ -61,12 +68,6 @@ const Game = () => {
     };
 
 
-    const resetGame = () => {
-        setSquares(Array(9).fill(null));
-        setIsXNext(true);
-        setWinner(null);
-        setStatus(`Let's Play`);
-    };
 
     return (
         <View style={styles.container}>
