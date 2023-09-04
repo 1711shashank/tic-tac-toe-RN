@@ -1,6 +1,6 @@
 import { View } from 'react-native';
-import InfoSection from '../../components/InfoSection';
-import DPSection from '../../components/DPSection';
+import InfoSection from '../components/InfoSection';
+import DPSection from '../components/DPSection';
 
 const Profile = () => {
 

@@ -1,9 +1,14 @@
-import Profile from './src/screens/Profile/Profile';
+import { NavigationContainer } from '@react-navigation/native';
+import Tabs from './src/components/Tabs';
+
 
 const App = () => {
 
     return (
-        <Profile />
+        <NavigationContainer>
+            <Tabs />
+        </NavigationContainer>
+
     )
 
 }
