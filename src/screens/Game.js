@@ -1,21 +1,62 @@
-import React, { useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, TouchableOpacity, Text, StyleSheet, TextInput } from "react-native";
 import { calculateWinner, isBoardFull } from "../utilities/helperFunction";
+import { io } from "socket.io-client";
+
 
 const Game = () => {
     const [squares, setSquares] = useState(Array(9).fill(null));
-    const [isXNext, setIsXNext] = useState(true);
+    const [myTurn, setMyTurn] = useState(true);
     const [winner, setWinner] = useState(null);
     const [status, setStatus] = useState(`Let's Play`);
 
+    const [roomInput, setRoomInput] = useState(0); 
+    const [socket, setSocket] = useState(null);
+
+
+    useEffect(() => {
+
+        const newSocket = io("http://localhost:3001");
+
+        setSocket(newSocket);
+
+        return () => {
+            if (newSocket) {
+                newSocket.disconnect();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("receive_data", (data) => {
+                const { myTurn: receivedIsXNext, roomInput: receivedRoomInput, index } = data;
+
+                if (roomInput === receivedRoomInput && squares[index] === null) {
+                    const newSquares = [...squares];
+                    newSquares[index] = receivedIsXNext ? "X" : "O";
+                    setSquares(newSquares);
+                    setMyTurn(!receivedIsXNext);
+                }
+            });
+        }
+    }, [socket, squares, roomInput]);
+
+
+
     const handleClick = (index) => {
+
+        if (roomInput !== "") {
+            socket.emit("send_data", { myTurn, roomInput, index });
+        }
+
         if (squares[index] || winner) return;
 
         const newSquares = [...squares];
-        newSquares[index] = isXNext ? "X" : "O";
+        newSquares[index] = myTurn ? "X" : "O";
 
         setSquares(newSquares);
-        setIsXNext(!isXNext);
+        setMyTurn(!myTurn);
 
         const calculatedWinner = calculateWinner(newSquares);
 
@@ -25,8 +66,24 @@ const Game = () => {
         } else if (isBoardFull(newSquares)) {
             setStatus("It's a draw!");
         } else {
-            setStatus(`Next player: ${isXNext ? "O" : "X"}`);
+            setStatus(`Next player: ${myTurn ? "O" : "X"}`);
         }
+    };
+
+    const handleEnterChatRoom = () => {
+
+        console.log(myTurn, roomInput);
+        if (roomInput !== '') {
+            socket.emit("join room", { myTurn, roomInput });
+        }
+
+    }
+
+    const resetGame = () => {
+        setSquares(Array(9).fill(null));
+        setMyTurn(true);
+        setWinner(null);
+        setStatus(`Let's Play`);
     };
 
     const RenderSquare = ({ index }) => {
@@ -44,14 +101,6 @@ const Game = () => {
         );
     };
 
-    const resetGame = () => {
-        setSquares(Array(9).fill(null));
-        setIsXNext(true);
-        setWinner(null);
-        setStatus(`Let's Play`);
-    };
-
-
     const Board = () => {
         return (
             <View style={styles.board}>
@@ -67,10 +116,22 @@ const Game = () => {
         );
     };
 
-
-
     return (
         <View style={styles.container}>
+            <View style={styles.modalView}>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.roomInput}
+                        placeholder="Enter the room name"
+                        value={roomInput}
+                        onChangeText={(text) => setRoomInput(text)}
+                    />
+                    <TouchableOpacity style={styles.enterRoomButton} onPress={handleEnterChatRoom}>
+                        <Text style={styles.buttonText}>Enter Room</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
             <Board />
 
             <View style={styles.status}>
@@ -137,6 +198,34 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: "center", // Center the text horizontally
     },
+
+
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+
+        padding: 25,
+
+    },
+    roomInput: {
+        fontSize: 16,
+        marginVertical: 15,
+        padding: 15,
+        color: 'white',
+        borderColor: 'lightgrey',
+        borderWidth: 1,
+        borderRadius: 5,
+    },
+    enterRoomButton: {
+        borderRadius: 5,
+        padding: 16,
+        color: 'white',
+        backgroundColor: '#00A884',
+        textAlign: 'center'
+    }
 
 });
 
