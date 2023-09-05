@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
         borderWidth: 1,
         borderRadius: 5,
+        placeholderTextColor: 'white'
     },
     enterRoomButton: {
         borderRadius: 5,

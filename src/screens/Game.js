@@ -13,7 +13,7 @@ const Game = () => {
     const [winner, setWinner] = useState('');
     const [status, setStatus] = useState(`Let's Play`);
 
-    const [room, setRoom] = useState(0);
+    const [room, setRoom] = useState();
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
@@ -31,9 +31,8 @@ const Game = () => {
             socket.on("receive_data", (data) => {
                 const { myTurn, index } = data;
 
-                console.log(myTurn, index);
 
-                const newSquares = [...squares];
+                const newSquares = squares;
                 newSquares[index] = myTurn ? "X" : "O";
                 setSquares(newSquares);
                 setMyTurn(!myTurn);
@@ -49,6 +48,7 @@ const Game = () => {
                     setStatus(`Next player: ${myTurn ? "O" : "X"}`);
                 }
 
+                console.log(myTurn, index, newSquares);
             });
 
             return;
@@ -57,15 +57,20 @@ const Game = () => {
 
 
     useEffect(() => {
+
         if (socket) {
             socket.on("receive_resetRequest", () => {
                 setSquares(Array(9).fill(null));
                 setMyTurn(true);
                 setWinner(null);
                 setStatus(`Let's Play`);
+
+                setRoom(null);
+                setRoomScreenModal(true);
+
             })
         }
-
+        return;
     }, [socket, winner]);
 
 
