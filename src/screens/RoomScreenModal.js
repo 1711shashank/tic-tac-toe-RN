@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal } from "react-native"
 
-const RoomScreenModal = ({ room, roomScreen, handleEnterChatRoom }) => {
+const RoomScreenModal = ({ room, roomScreen, handleEnterGameRoom }) => {
 
     return (
         <>
@@ -16,7 +16,7 @@ const RoomScreenModal = ({ room, roomScreen, handleEnterChatRoom }) => {
                                 value={room}
                                 onChangeText={(text) => setRoom(text)}
                             />
-                            <TouchableOpacity style={styles.enterRoomButton} onPress={handleEnterChatRoom}>
+                            <TouchableOpacity style={styles.enterRoomButton} onPress={handleEnterGameRoom}>
                                 <Text style={styles.buttonText}>Enter Room</Text>
                             </TouchableOpacity>
                         </View>

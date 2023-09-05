@@ -65,21 +65,22 @@ const Game = () => {
     }, [socket, winner]);
 
 
-    const handleClick = (index) => {
-        if (room !== "") {
-            socket.emit("send_data", { myTurn, room, index });
-        }
-    };
-
-    const handleEnterChatRoom = () => {
+    const handleEnterGameRoom = () => {
         if (room !== '') {
             socket.emit("join room", { myTurn, room });
         }
         setRoomScreenModal(false);
     }
 
-    const resetGame = () => {
 
+    const handleClick = (index) => {
+        if (room !== "") {
+            socket.emit("send_data", { myTurn, room, index });
+        }
+    };
+
+   
+    const resetGame = () => {
         if (room !== "") {
             socket.emit("send_resetRequest", { room });
         }
@@ -90,7 +91,7 @@ const Game = () => {
 
             {
                 roomScreenModal
-                    ? <RoomScreenModal room={room} roomScreenModal={roomScreenModal} handleEnterChatRoom={handleEnterChatRoom} />
+                    ? <RoomScreenModal room={room} roomScreenModal={roomScreenModal} handleEnterGameRoom={handleEnterGameRoom} />
                     : <>
                         <GameBoard squares={squares} winner={winner} handleClick={handleClick} status={status} />
 
