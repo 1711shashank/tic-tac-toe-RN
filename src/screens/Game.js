@@ -49,33 +49,40 @@ const Game = () => {
 
             });
         }
-    }, [socket, squares, room, myTurn, winner, status]);
+    }, [socket, squares]);
 
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("receive_resetRequest", () => {
+                setSquares(Array(9).fill(null));
+                setMyTurn(true);
+                setWinner(null);
+                setStatus(`Let's Play`);
+            })
+        }
+
+    }, [socket, winner]);
 
 
     const handleClick = (index) => {
-
         if (room !== "") {
             socket.emit("send_data", { myTurn, room, index });
         }
-
     };
 
     const handleEnterChatRoom = () => {
-
-        setRoomScreenModal(false);
-
-        console.log(myTurn, room);
         if (room !== '') {
             socket.emit("join room", { myTurn, room });
         }
+        setRoomScreenModal(false);
     }
 
     const resetGame = () => {
-        setSquares(Array(9).fill(null));
-        setMyTurn(true);
-        setWinner(null);
-        setStatus(`Let's Play`);
+
+        if (room !== "") {
+            socket.emit("send_resetRequest", { room });
+        }
     };
 
     return (
