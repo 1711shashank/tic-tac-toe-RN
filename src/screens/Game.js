@@ -2,81 +2,72 @@ import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet, TextInput } from "react-native";
 import { calculateWinner, isBoardFull } from "../utilities/helperFunction";
 import { io } from "socket.io-client";
+import RoomScreenModal from "./RoomScreenModal";
 
 
 const Game = () => {
+    const [roomScreenModal, setRoomScreenModal] = useState(true);
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [myTurn, setMyTurn] = useState(true);
     const [winner, setWinner] = useState(null);
     const [status, setStatus] = useState(`Let's Play`);
 
-    const [roomInput, setRoomInput] = useState(0); 
+    const [room, setRoom] = useState(0);
     const [socket, setSocket] = useState(null);
 
-
     useEffect(() => {
-
         const newSocket = io("http://localhost:3001");
-
         setSocket(newSocket);
 
         return () => {
-            if (newSocket) {
-                newSocket.disconnect();
-            }
+            if (newSocket) newSocket.disconnect();
         };
+
     }, []);
 
     useEffect(() => {
         if (socket) {
             socket.on("receive_data", (data) => {
-                const { myTurn: receivedIsXNext, roomInput: receivedRoomInput, index } = data;
+                const { myTurn, index } = data;
 
-                if (roomInput === receivedRoomInput && squares[index] === null) {
-                    const newSquares = [...squares];
-                    newSquares[index] = receivedIsXNext ? "X" : "O";
-                    setSquares(newSquares);
-                    setMyTurn(!receivedIsXNext);
+                const newSquares = [...squares];
+                newSquares[index] = myTurn ? "X" : "O";
+                setSquares(newSquares);
+                setMyTurn(!myTurn);
+
+
+                const calculatedWinner = calculateWinner(newSquares);
+                if (calculatedWinner) {
+                    setWinner(calculatedWinner);
+                    setStatus(`Winner: ${calculatedWinner}`);
+                } else if (isBoardFull(newSquares)) {
+                    setStatus("It's a draw!");
+                } else {
+                    setStatus(`Next player: ${myTurn ? "O" : "X"}`);
                 }
+
             });
         }
-    }, [socket, squares, roomInput]);
+    }, [socket, squares, room, myTurn, winner, status]);
 
 
 
     const handleClick = (index) => {
 
-        if (roomInput !== "") {
-            socket.emit("send_data", { myTurn, roomInput, index });
+        if (room !== "") {
+            socket.emit("send_data", { myTurn, room, index });
         }
 
-        if (squares[index] || winner) return;
-
-        const newSquares = [...squares];
-        newSquares[index] = myTurn ? "X" : "O";
-
-        setSquares(newSquares);
-        setMyTurn(!myTurn);
-
-        const calculatedWinner = calculateWinner(newSquares);
-
-        if (calculatedWinner) {
-            setWinner(calculatedWinner);
-            setStatus(`Winner: ${calculatedWinner}`);
-        } else if (isBoardFull(newSquares)) {
-            setStatus("It's a draw!");
-        } else {
-            setStatus(`Next player: ${myTurn ? "O" : "X"}`);
-        }
     };
 
     const handleEnterChatRoom = () => {
 
-        console.log(myTurn, roomInput);
-        if (roomInput !== '') {
-            socket.emit("join room", { myTurn, roomInput });
-        }
+        setRoomScreenModal(false);
 
+        console.log(myTurn, room);
+        if (room !== '') {
+            socket.emit("join room", { myTurn, room });
+        }
     }
 
     const resetGame = () => {
@@ -118,34 +109,27 @@ const Game = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.modalView}>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.roomInput}
-                        placeholder="Enter the room name"
-                        value={roomInput}
-                        onChangeText={(text) => setRoomInput(text)}
-                    />
-                    <TouchableOpacity style={styles.enterRoomButton} onPress={handleEnterChatRoom}>
-                        <Text style={styles.buttonText}>Enter Room</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
 
-            <Board />
+            {
+                roomScreenModal
+                    ? <RoomScreenModal room={room} roomScreenModal={roomScreenModal} handleEnterChatRoom={handleEnterChatRoom}/>
+                    : <>
+                        <Board />
 
-            <View style={styles.status}>
-                <Text style={styles.statusText}>{status}</Text>
-            </View>
+                        <View style={styles.status}>
+                            <Text style={styles.statusText}>{status}</Text>
+                        </View>
 
-            {(winner || isBoardFull(squares)) && (
-                <TouchableOpacity
-                    style={styles.playAgainButton}
-                    onPress={resetGame}
-                >
-                    <Text style={styles.buttonText}>Play Again</Text>
-                </TouchableOpacity>
-            )}
+                        {(winner || isBoardFull(squares)) && (
+                            <TouchableOpacity
+                                style={styles.playAgainButton}
+                                onPress={resetGame}
+                            >
+                                <Text style={styles.buttonText}>Play Again</Text>
+                            </TouchableOpacity>
+                        )}
+                    </>
+            }
         </View>
     );
 };
