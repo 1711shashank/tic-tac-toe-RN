@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet, TextInput } from "react-nativ
 import { calculateWinner, isBoardFull } from "../utilities/helperFunction";
 import { io } from "socket.io-client";
 import RoomScreenModal from "./RoomScreenModal";
+import GameBoard from "./GameBoard";
 
 
 const Game = () => {
@@ -77,48 +78,14 @@ const Game = () => {
         setStatus(`Let's Play`);
     };
 
-    const RenderSquare = ({ index }) => {
-        const squareValue = squares[index];
-
-        return (
-            <TouchableOpacity
-                key={index}
-                style={styles.square}
-                onPress={() => handleClick(index)}
-                disabled={squareValue || winner}
-            >
-                <Text style={styles.squareText}>{squareValue}</Text>
-            </TouchableOpacity>
-        );
-    };
-
-    const Board = () => {
-        return (
-            <View style={styles.board}>
-                {Array(3).fill(null).map((_, rowIndex) => (
-                    <View key={rowIndex} style={styles.row}>
-                        {Array(3).fill(null).map((_, colIndex) => {
-                            const index = rowIndex * 3 + colIndex;
-                            return <RenderSquare key={index} index={index} />;
-                        })}
-                    </View>
-                ))}
-            </View>
-        );
-    };
-
     return (
         <View style={styles.container}>
 
             {
                 roomScreenModal
-                    ? <RoomScreenModal room={room} roomScreenModal={roomScreenModal} handleEnterChatRoom={handleEnterChatRoom}/>
+                    ? <RoomScreenModal room={room} roomScreenModal={roomScreenModal} handleEnterChatRoom={handleEnterChatRoom} />
                     : <>
-                        <Board />
-
-                        <View style={styles.status}>
-                            <Text style={styles.statusText}>{status}</Text>
-                        </View>
+                        <GameBoard squares={squares} winner={winner} handleClick={handleClick} status={status} />
 
                         {(winner || isBoardFull(squares)) && (
                             <TouchableOpacity
