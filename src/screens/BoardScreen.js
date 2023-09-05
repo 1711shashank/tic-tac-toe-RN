@@ -38,12 +38,13 @@ const BoardScreen = ({ room, socket }) => {
     const RenderSquare = ({ index }) => {
         const squareValue = squares[index];
 
+        console.log(squareValue);
+
         return (
             <TouchableOpacity
                 key={index}
                 style={styles.square}
                 onPress={() => handleClick(index)}
-                disabled={squareValue || winner}
             >
                 <Text style={styles.squareText}>{squareValue}</Text>
             </TouchableOpacity>

@@ -32,13 +32,14 @@ const Tabs = () => {
             }}
         >
 
+            {/* <Tab.Screen name={'Chat'} options={{ tabBarIcon: ({ focused }) => <Ionicons name="game-controller-outline" size={25} color={focused ? '#00A884' : 'gray'} /> }}>
+                {() => <Chat />}
+            </Tab.Screen> */}
+
             <Tab.Screen name={'Game'} options={{ tabBarIcon: ({ focused }) => <Ionicons name="game-controller-outline" size={25} color={focused ? '#00A884' : 'gray'} /> }}>
                 {() => <Game />}
             </Tab.Screen>
 
-            <Tab.Screen name={'Chat'} options={{ tabBarIcon: ({ focused }) => <Ionicons name="game-controller-outline" size={25} color={focused ? '#00A884' : 'gray'} /> }}>
-                {() => <Chat />}
-            </Tab.Screen>
             <Tab.Screen name={'Profile'} options={{ tabBarIcon: ({ focused }) => <Feather name="user" size={25} color={focused ? '#00A884' : 'gray'} /> }}>
                 {() => <Profile />}
             </Tab.Screen>

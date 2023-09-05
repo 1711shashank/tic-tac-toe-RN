@@ -6,15 +6,15 @@ const Chat = () => {
     const [socket, setSocket] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
     const [newMessage, setNewMessage] = useState("");
-    const [user, setUser] = useState("");
-    const [room, setRoom] = useState("");
+    const [user, setUser] = useState("kumar");
+    const [room, setRoom] = useState("123");
     const [chatIsVisible, setChatIsVisible] = useState(false);
     const [messages, setMessages] = useState([]);
 
 
     useEffect(() => {
-        
-        const newSocket = io("http://localhost:3001");
+
+        const newSocket = io("http://192.168.184.1:3001",{transports: ['websocket']});
 
         newSocket.on("connect", () => {
             setIsConnected(true);
@@ -35,6 +35,14 @@ const Chat = () => {
 
     useEffect(() => {
         if (socket) {
+            socket.on("roomJoined", ( room ) => {
+                console.log("Room joined", room);
+            });
+        }
+    }, [socket,room]);
+
+    useEffect(() => {
+        if (socket) {
             socket.on("receive_msg", ({ user, message }) => {
                 const msg = `${user} sent: ${message}`;
                 setMessages((prevState) => [msg, ...prevState]);
@@ -43,9 +51,10 @@ const Chat = () => {
     }, [socket]);
 
     const handleEnterChatRoom = () => {
+        console.log(user, room);
         if (user !== "" && room !== "") {
-            setChatIsVisible(true);
             socket.emit("join room", { user, room });
+            // setChatIsVisible(true);
         }
     };
 
@@ -58,7 +67,7 @@ const Chat = () => {
             };
 
             socket.emit("send_msg", messageData);
-            setNewMessage(""); 
+            setNewMessage("");
         }
     };
 

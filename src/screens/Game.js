@@ -10,14 +10,14 @@ const Game = () => {
     const [roomScreenModal, setRoomScreenModal] = useState(true);
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [myTurn, setMyTurn] = useState(true);
-    const [winner, setWinner] = useState(null);
+    const [winner, setWinner] = useState('');
     const [status, setStatus] = useState(`Let's Play`);
 
     const [room, setRoom] = useState(0);
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const newSocket = io("http://localhost:3001");
+        const newSocket = io("http://192.168.184.1:3001", { transports: ['websocket'] });
         setSocket(newSocket);
 
         return () => {
@@ -30,6 +30,8 @@ const Game = () => {
         if (socket) {
             socket.on("receive_data", (data) => {
                 const { myTurn, index } = data;
+
+                console.log(myTurn, index);
 
                 const newSquares = [...squares];
                 newSquares[index] = myTurn ? "X" : "O";
@@ -48,6 +50,8 @@ const Game = () => {
                 }
 
             });
+
+            return;
         }
     }, [socket, squares]);
 
@@ -66,32 +70,32 @@ const Game = () => {
 
 
     const handleEnterGameRoom = () => {
-        if (room !== '') {
-            socket.emit("join room", { myTurn, room });
-        }
         setRoomScreenModal(false);
+        socket.emit("join room", { room });
     }
 
 
     const handleClick = (index) => {
-        if (room !== "") {
+
+        if (room !== "" && squares[index] === null) {
             socket.emit("send_data", { myTurn, room, index });
         }
     };
 
-   
+
     const resetGame = () => {
         if (room !== "") {
             socket.emit("send_resetRequest", { room });
         }
     };
 
+
     return (
         <View style={styles.container}>
 
             {
                 roomScreenModal
-                    ? <RoomScreenModal room={room} roomScreenModal={roomScreenModal} handleEnterGameRoom={handleEnterGameRoom} />
+                    ? <RoomScreenModal room={room} setRoom={setRoom} roomScreenModal={roomScreenModal} handleEnterGameRoom={handleEnterGameRoom} />
                     : <>
                         <GameBoard squares={squares} winner={winner} handleClick={handleClick} status={status} />
 

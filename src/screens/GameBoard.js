@@ -10,7 +10,7 @@ const GameBoard = ({ squares, winner, handleClick, status }) => {
                 key={index}
                 style={styles.square}
                 onPress={() => handleClick(index)}
-                disabled={squareValue || winner}
+                // disabled={squareValue || winner}
             >
                 <Text style={styles.squareText}>{squareValue}</Text>
             </TouchableOpacity>

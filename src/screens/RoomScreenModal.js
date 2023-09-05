@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Modal } from "react-native"
 
-const RoomScreenModal = ({ room, roomScreen, handleEnterGameRoom }) => {
+const RoomScreenModal = ({ room, setRoom, roomScreen, handleEnterGameRoom }) => {
 
     return (
         <>
@@ -34,8 +34,7 @@ const styles = StyleSheet.create({
 
     modalView: {
         backgroundColor: '#1F2C33',
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
+        borderRadius: 15,
         padding: 25,
         shadowColor: '#000',
         shadowOpacity: 0.25,
