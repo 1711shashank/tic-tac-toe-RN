@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const GameBoard = ({ squares, winner, handleClick, status }) => {
+const GameBoard = ({ squares, handleClick, status }) => {
 
     const RenderSquare = ({ index }) => {
         const squareValue = squares[index];
@@ -10,7 +10,6 @@ const GameBoard = ({ squares, winner, handleClick, status }) => {
                 key={index}
                 style={styles.square}
                 onPress={() => handleClick(index)}
-                // disabled={squareValue || winner}
             >
                 <Text style={styles.squareText}>{squareValue}</Text>
             </TouchableOpacity>
@@ -40,11 +39,6 @@ const GameBoard = ({ squares, winner, handleClick, status }) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#111B21",
-        justifyContent: "center",
-    },
     row: {
         flexDirection: "row",
         justifyContent: "center",
@@ -71,50 +65,7 @@ const styles = StyleSheet.create({
     statusText: {
         color: "#00A884",
         fontSize: 24,
-        // fontWeight: "bold",
     },
-    playAgainButton: {
-        backgroundColor: "#00A884",
-        paddingVertical: 10, // Adjust top and bottom padding
-        paddingHorizontal: 20, // Adjust left and right padding
-        borderRadius: 6,
-        marginTop: 20,
-        marginHorizontal: '25%'
-    },
-    buttonText: {
-        color: "white",
-        fontSize: 18,
-        textAlign: "center", // Center the text horizontally
-    },
-
-
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalView: {
-
-        padding: 25,
-
-    },
-    roomInput: {
-        fontSize: 16,
-        marginVertical: 15,
-        padding: 15,
-        color: 'white',
-        borderColor: 'lightgrey',
-        borderWidth: 1,
-        borderRadius: 5,
-    },
-    enterRoomButton: {
-        borderRadius: 5,
-        padding: 16,
-        color: 'white',
-        backgroundColor: '#00A884',
-        textAlign: 'center'
-    }
-
 });
 
 export default GameBoard;

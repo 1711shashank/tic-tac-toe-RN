@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet, TextInput } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { calculateWinner, isBoardFull } from "../utilities/helperFunction";
 import { io } from "socket.io-client";
-import RoomScreenModal from "./RoomScreenModal";
-import GameBoard from "./GameBoard";
+import RoomScreenModal from "../components/RoomScreenModal";
+import GameBoard from "../components/GameBoard";
 
 
 const Game = () => {
@@ -29,8 +29,8 @@ const Game = () => {
     useEffect(() => {
         if (socket) {
             socket.on("receive_data", (data) => {
-                const { myTurn, index } = data;
 
+                const { myTurn, index } = data;
 
                 const newSquares = squares;
                 newSquares[index] = myTurn ? "X" : "O";
@@ -47,8 +47,6 @@ const Game = () => {
                 } else {
                     setStatus(`Next player: ${myTurn ? "O" : "X"}`);
                 }
-
-                console.log(myTurn, index, newSquares);
             });
 
             return;
@@ -125,38 +123,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#111B21",
         justifyContent: "center",
     },
-    row: {
-        flexDirection: "row",
-        justifyContent: "center",
-    },
-    square: {
-        width: '30%',
-        aspectRatio: 1,
-        margin: 3,
-        backgroundColor: "transparent",
-        borderWidth: 2,
-        borderColor: "#00A884",
-        borderRadius: 6,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    squareText: {
-        fontSize: 32,
-        color: "#00A884",
-    },
     status: {
         marginTop: 20,
         alignItems: "center",
     },
-    statusText: {
-        color: "#00A884",
-        fontSize: 24,
-        // fontWeight: "bold",
-    },
     playAgainButton: {
         backgroundColor: "#00A884",
-        paddingVertical: 10, // Adjust top and bottom padding
-        paddingHorizontal: 20, // Adjust left and right padding
+        paddingVertical: 10, 
+        paddingHorizontal: 20, 
         borderRadius: 6,
         marginTop: 20,
         marginHorizontal: '25%'
@@ -164,36 +138,8 @@ const styles = StyleSheet.create({
     buttonText: {
         color: "white",
         fontSize: 18,
-        textAlign: "center", // Center the text horizontally
+        textAlign: "center",
     },
-
-
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalView: {
-
-        padding: 25,
-
-    },
-    roomInput: {
-        fontSize: 16,
-        marginVertical: 15,
-        padding: 15,
-        color: 'white',
-        borderColor: 'lightgrey',
-        borderWidth: 1,
-        borderRadius: 5,
-    },
-    enterRoomButton: {
-        borderRadius: 5,
-        padding: 16,
-        color: 'white',
-        backgroundColor: '#00A884',
-        textAlign: 'center'
-    }
 
 });
 
