@@ -13,7 +13,7 @@ This project is a multiplayer TicTacToe game developed using React Native and So
 
 ## Demo Video
 
-Watch the gameplay demo [here](https://github.com/1711shashank/tic-tac-toe-RN/blob/main/demo%20video.mp4).
+Watch the gameplay demo [here](https://www.linkedin.com/feed/update/urn:li:activity:7105220312656441345/).
 
 
 ## Server-Side Repository
